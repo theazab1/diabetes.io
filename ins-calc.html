@@ -29,7 +29,6 @@
             margin-bottom: 10px;
             font-size: 20px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-            background-color: #4a90e2;
         }
 
         .card {
@@ -697,7 +696,7 @@
                 foodTypes = [...new Set(foodDatabase.map(f => f.type).filter(t => t))];
                 populateTypeFilter();
                 
-                statusBar.textContent = `✓ تم تحميل البيانات`;
+                statusBar.textContent = '✓ تم تحميل البيانات';
                 
                 // Cache
                 localStorage.setItem('foodDatabase', JSON.stringify(foodDatabase));
