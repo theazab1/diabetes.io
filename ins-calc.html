@@ -906,4 +906,113 @@
         }
 
         function goToStep3() {
-            document.
+            document.getElementById('step2Card').classList.add('hidden');
+            document.getElementById('step3Card').classList.remove('hidden');
+            
+            const savedTargetBS = localStorage.getItem('targetBS');
+            const savedCorrectionFactor = localStorage.getItem('correctionFactor');
+            
+            if (savedTargetBS) document.getElementById('targetBS').value = savedTargetBS;
+            if (savedCorrectionFactor) document.getElementById('correctionFactor').value = savedCorrectionFactor;
+            
+            calculateCorrection();
+        }
+
+        // ========================================
+        // CALCULATIONS
+        // ========================================
+
+        function calculateFoodInsulin() {
+            const carbFactor = parseFloat(document.getElementById('carbFactor').value);
+            
+            if (carbFactor && carbFactor > 0) {
+                foodInsulinAmount = totalCarbs / carbFactor;
+                document.getElementById('calcCarbFactor').textContent = carbFactor;
+                document.getElementById('foodInsulin').textContent = foodInsulinAmount.toFixed(1) + ' وحدة';
+                document.getElementById('nextStep3Btn').disabled = false;
+                
+                localStorage.setItem('carbFactor', carbFactor);
+            } else {
+                document.getElementById('calcCarbFactor').textContent = '-';
+                document.getElementById('foodInsulin').textContent = '0 وحدة';
+                document.getElementById('nextStep3Btn').disabled = true;
+            }
+        }
+
+        function calculateCorrection() {
+            const currentBS = parseFloat(document.getElementById('currentBS').value);
+            const targetBS = parseFloat(document.getElementById('targetBS').value);
+            const correctionFactor = parseFloat(document.getElementById('correctionFactor').value);
+            
+            if (currentBS && targetBS && correctionFactor) {
+                const bsDiff = currentBS - targetBS;
+                correctionInsulinAmount = Math.max(0, bsDiff / correctionFactor);
+                
+                document.getElementById('calcBSDiff').textContent = bsDiff + ' mg/dL';
+                document.getElementById('calcCorrFactor').textContent = correctionFactor;
+                document.getElementById('correctionInsulin').textContent = correctionInsulinAmount.toFixed(1) + ' وحدة';
+                
+                localStorage.setItem('targetBS', targetBS);
+                localStorage.setItem('correctionFactor', correctionFactor);
+            } else {
+                document.getElementById('calcBSDiff').textContent = '-';
+                document.getElementById('calcCorrFactor').textContent = '-';
+                document.getElementById('correctionInsulin').textContent = '0 وحدة';
+            }
+        }
+
+        function showFinalResult() {
+            const currentBS = parseFloat(document.getElementById('currentBS').value);
+            
+            if (!currentBS) {
+                alert('الرجاء إدخال السكر الحالي');
+                return;
+            }
+            
+            document.getElementById('step3Card').classList.add('hidden');
+            document.getElementById('resultCard').classList.remove('hidden');
+            
+            const totalInsulin = foodInsulinAmount + correctionInsulinAmount;
+            
+            document.getElementById('finalInsulin').textContent = totalInsulin.toFixed(1);
+            document.getElementById('finalBreakdown').textContent = 
+                `طعام: ${foodInsulinAmount.toFixed(1)} + تصحيح: ${correctionInsulinAmount.toFixed(1)}`;
+            
+            document.getElementById('summaryCarbs').textContent = totalCarbs.toFixed(1) + ' جرام';
+            document.getElementById('summaryFoodInsulin').textContent = foodInsulinAmount.toFixed(1) + ' وحدة';
+            document.getElementById('summaryCurrentBS').textContent = currentBS + ' mg/dL';
+            document.getElementById('summaryCorrectionInsulin').textContent = correctionInsulinAmount.toFixed(1) + ' وحدة';
+        }
+
+        function startOver() {
+            // Clear all data
+            currentMeal = [];
+            totalCarbs = 0;
+            foodInsulinAmount = 0;
+            correctionInsulinAmount = 0;
+            
+            // Reset inputs but keep saved factors
+            document.getElementById('carbFactor').value = localStorage.getItem('carbFactor') || '';
+            document.getElementById('currentBS').value = '';
+            document.getElementById('searchInput').value = '';
+            document.getElementById('typeFilter').value = '';
+            
+            // Hide food table
+            document.querySelector('.food-table-container').classList.remove('show');
+            
+            renderMeal();
+            calculateTotalCarbs();
+            
+            // Hide all cards except step 1 and meal
+            document.getElementById('resultCard').classList.add('hidden');
+            document.getElementById('step2Card').classList.add('hidden');
+            document.getElementById('step3Card').classList.add('hidden');
+            document.getElementById('step1Card').classList.remove('hidden');
+            document.getElementById('mealCard').classList.remove('hidden');
+        }
+
+        // Initialize
+        loadFoodData();
+    </script>
+</body>
+</html>
