@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>حاسبة الأنسولين</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+            background: linear-gradient(135deg, #87CEEB 0%, #E0F6FF 100%);
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        /* Card Header with Step Number, Title, and Refresh Button */
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #4A90E2;
+        }
+
+        .card-header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-header h2 {
+            color: #333;
+            font-size: 16px;
+            margin: 0;
+        }
+
+        .step-number {
+            background: #4A90E2;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .refresh-btn {
+            background: #4A90E2;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
+            white-space: nowrap;
+        }
+
+        .refresh-btn:hover {
+            background: #357ABD;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 8px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-size: 11px;
+            text-align: center;
+        }
+
+        .status-bar.error {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        /* Filter and Search in Same Row */
+        .filter-search-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .filter-search-row select {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            min-width: 0;
+        }
+
+        .filter-search-row input {
+            flex: 1.5;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            min-width: 0;
+        }
+
+        .filter-search-row select:focus,
+        .filter-search-row input:focus {
+            outline: none;
+            border-color: #4A90E2;
+        }
+
+        /* Food Table */
+        .food-table-container {
+            max-height: 200px;
+            overflow-y: auto;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            display: none;
+        }
+        
+        .food-table-container.show {
+            display: block;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 8px 6px;
+            text-align: right;
+            font-size: 12px;
+        }
+
+        th {
+            background: #4A90E2;
+            color: white;
+            position: sticky;
+            top: 0;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e8f4f8;
+        }
+
+        .add-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .portion-input {
+            width: 45px;
+            padding: 4px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        /* Meal Section */
+        .meal-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            margin-bottom: 6px;
+        }
+
+        .meal-item-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .meal-item-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 13px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .meal-item-details {
+            color: #666;
+            font-size: 11px;
+        }
+
+        .remove-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+
+        .empty-meal {
+            text-align: center;
+            color: #999;
+            padding: 15px;
+            font-size: 13px;
+        }
+
+        /* Total Carbs Display */
+        .total-carbs-box {
+            background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .total-carbs-value {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .total-carbs-label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        /* Button Row (Same Line) */
+        .button-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .button-row .btn {
+            flex: 1;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: #4A90E2;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #357ABD;
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        /* Input Groups */
+        .input-group {
+            margin-bottom: 12px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+            font-size: 13px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #4A90E2;
+        }
+
+        .input-group small {
+            display: block;
+            color: #888;
+            font-size: 11px;
+            margin-top: 3px;
+        }
+
+        /* Two Inputs in Same Row */
+        .input-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-row .input-group {
+            flex: 1;
+        }
+
+        /* Calculation Box */
+        .calc-box {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .calc-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+        }
+
+        .calc-row:last-child {
+            border-bottom: none;
+        }
+
+        .calc-label {
+            color: #666;
+        }
+
+        .calc-value {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .calc-result {
+            background: #e8f5e9;
+            margin: 8px -12px -12px;
+            padding: 12px;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .calc-result-orange {
+            background: #fff3e0;
+        }
+
+        .calc-result .calc-value {
+            color: #28a745;
+            font-size: 16px;
+        }
+
+        .calc-result-orange .calc-value {
+            color: #e65100;
+        }
+
+        /* Final Result */
+        .final-result {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .final-result-value {
+            font-size: 42px;
+            font-weight: bold;
+        }
+
+        .final-result-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .final-result-breakdown {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255,255,255,0.3);
+        }
+
+        /* Hidden */
+        .hidden {
+            display: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 15px;
+            color: #666;
+            font-size: 13px;
+        }
+
+        /* Summary Box */
+        .summary-box {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 12px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            font-size: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🍽️ احسب جرعتك </h1>
+
+        <!-- Status Bar -->
+        <div class="status-bar" id="statusBar">جاري تحميل البيانات...</div>
+
+        <!-- Step 1: Search and Select Foods -->
+        <div class="card" id="step1Card">
+            <div class="card-header">
+                <div class="card-header-right">
+                    <span class="step-number">1</span>
+                    <h2>اختر الأطعمة</h2>
+                </div>
+                <button class="refresh-btn" onclick="loadFoodData()">🔄 تحديث</button>
+            </div>
+            
+            <!-- Filter and Search in Same Row -->
+            <div class="filter-search-row">
+                <select id="typeFilter" onchange="filterFoods()">
+                    <option value="">كل الأنواع</option>
+                </select>
+                <input type="text" id="searchInput" placeholder="ابحث عن طعام..." oninput="filterFoods()">
+            </div>
+            
+            <!-- Food Table -->
+            <div class="food-table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>الطعام</th>
+                            <th>الوحدة</th>
+                            <th>كارب</th>
+                            <th>الكمية</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="foodTableBody">
+                        <tr><td colspan="5" class="loading">جاري التحميل...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Current Meal -->
+        <div class="card" id="mealCard">
+            <div class="card-header">
+                <div class="card-header-right">
+                    <span class="step-number">🍴</span>
+                    <h2>الوجبة الحالية</h2>
+                </div>
+            </div>
+            
+            <div id="mealList">
+                <div class="empty-meal">لم تضف أي طعام بعد</div>
+            </div>
+
+            <!-- Total Carbs -->
+            <div class="total-carbs-box">
+                <div class="total-carbs-value" id="totalCarbs">0</div>
+                <div class="total-carbs-label">إجمالي الكربوهيدرات (جرام)</div>
+            </div>
+
+            <!-- Buttons in Same Row -->
+            <div class="button-row">
+                <button class="btn btn-danger" onclick="startOver()">🔄 البدء من جديد</button>
+                <button class="btn btn-primary" onclick="goToStep2()" id="nextStep2Btn" disabled>التالي ←</button>
+            </div>
+        </div>
+
+        <!-- Step 2: Enter Carb Factor -->
+        <div class="card hidden" id="step2Card">
+            <div class="card-header">
+                <div class="card-header-right">
+                    <span class="step-number">2</span>
+                    <h2>معامل الكربوهيدرات</h2>
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label>أدخل معامل الكربوهيدرات:</label>
+                <input type="number" id="carbFactor" placeholder="مثال: 10" min="1" step="0.5" oninput="calculateFoodInsulin()">
+                <small>كم جرام كارب تغطيها وحدة أنسولين واحدة؟</small>
+            </div>
+
+            <div class="calc-box">
+                <div class="calc-row">
+                    <span class="calc-label">إجمالي الكارب:</span>
+                    <span class="calc-value" id="calcTotalCarbs">0 جرام</span>
+                </div>
+                <div class="calc-row">
+                    <span class="calc-label">÷ معامل الكارب:</span>
+                    <span class="calc-value" id="calcCarbFactor">-</span>
+                </div>
+                <div class="calc-row calc-result">
+                    <span class="calc-label" style="font-weight: 600;">أنسولين الطعام:</span>
+                    <span class="calc-value" id="foodInsulin">0 وحدة</span>
+                </div>
+            </div>
+
+            <div class="button-row" style="margin-top: 12px;">
+                <button class="btn btn-danger" onclick="startOver()">🔄 البدء من جديد</button>
+                <button class="btn btn-primary" onclick="goToStep3()" id="nextStep3Btn" disabled>التالي ←</button>
+            </div>
+        </div>
+
+        <!-- Step 3: Correction Insulin -->
+        <div class="card hidden" id="step3Card">
+            <div class="card-header">
+                <div class="card-header-right">
+                    <span class="step-number">3</span>
+                    <h2>أنسولين التصحيح</h2>
+                </div>
+            </div>
+            
+            <!-- Two Inputs in Same Row -->
+            <div class="input-row">
+                <div class="input-group">
+                    <label>السكر الحالي:</label>
+                    <input type="number" id="currentBS" placeholder="180" min="0" oninput="calculateCorrection()">
+                </div>
+                <div class="input-group">
+                    <label>السكر المستهدف:</label>
+                    <input type="number" id="targetBS" placeholder="100" min="0" value="100" oninput="calculateCorrection()">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>معامل التصحيح:</label>
+                <input type="number" id="correctionFactor" placeholder="مثال: 50" min="1" oninput="calculateCorrection()">
+                <small>كم ينخفض السكر بوحدة أنسولين واحدة؟</small>
+            </div>
+
+            <div class="calc-box">
+                <div class="calc-row">
+                    <span class="calc-label">السكر الحالي - المستهدف:</span>
+                    <span class="calc-value" id="calcBSDiff">-</span>
+                </div>
+                <div class="calc-row">
+                    <span class="calc-label">÷ معامل التصحيح:</span>
+                    <span class="calc-value" id="calcCorrFactor">-</span>
+                </div>
+                <div class="calc-row calc-result calc-result-orange">
+                    <span class="calc-label" style="font-weight: 600;">أنسولين التصحيح:</span>
+                    <span class="calc-value" id="correctionInsulin">0 وحدة</span>
+                </div>
+            </div>
+
+            <div class="button-row" style="margin-top: 12px;">
+                <button class="btn btn-danger" onclick="startOver()">🔄 البدء من جديد</button>
+                <button class="btn btn-success" onclick="showFinalResult()">احسب ←</button>
+            </div>
+        </div>
+
+        <!-- Final Result -->
+        <div class="card hidden" id="resultCard">
+            <div class="card-header">
+                <div class="card-header-right">
+                    <span class="step-number">✓</span>
+                    <h2>النتيجة النهائية</h2>
+                </div>
+            </div>
+            
+            <div class="final-result">
+                <div class="final-result-value" id="finalInsulin">0</div>
+                <div class="final-result-label">وحدات أنسولين</div>
+                <div class="final-result-breakdown" id="finalBreakdown">
+                    أنسولين الطعام: 0 + أنسولين التصحيح: 0
+                </div>
+            </div>
+
+            <div class="summary-box">
+                <div class="summary-row">
+                    <span>إجمالي الكارب:</span>
+                    <span id="summaryCarbs">-</span>
+                </div>
+                <div class="summary-row">
+                    <span>أنسولين الطعام:</span>
+                    <span id="summaryFoodInsulin">-</span>
+                </div>
+                <div class="summary-row">
+                    <span>السكر الحالي:</span>
+                    <span id="summaryCurrentBS">-</span>
+                </div>
+                <div class="summary-row">
+                    <span>أنسولين التصحيح:</span>
+                    <span id="summaryCorrectionInsulin">-</span>
+                </div>
+            </div>
+
+            <button class="btn btn-danger" onclick="startOver()" style="width: 100%; margin-top: 12px;">🔄 البدء من جديد</button>
+        </div>
+    </div>
+
+    <script>
+        // ========================================
+        // CONFIGURATION - EDIT YOUR URL HERE
+        // ========================================
+        const FOODS_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT8o1qHZUUOVnh4msa5fO6q-DvMIhefYJLmjdSvdkMuoLOd3GNOJqbKX_CagFhWzXmRbRx5AIxjuHKh/pub?gid=0&single=true&output=csv';
+        const CORS_PROXY = 'https://corsproxy.io/?';
+        // ========================================
+
+        let foodDatabase = [];
+        let currentMeal = [];
+        let foodTypes = [];
+
+        // Calculation values
+        let totalCarbs = 0;
+        let foodInsulinAmount = 0;
+        let correctionInsulinAmount = 0;
+
+        // Load food data
+        async function loadFoodData() {
+            const statusBar = document.getElementById('statusBar');
+            statusBar.className = 'status-bar';
+            statusBar.textContent = 'جاري تحميل البيانات...';
+
+            try {
+                const response = await fetch(CORS_PROXY + encodeURIComponent(FOODS_SHEET_URL));
+                
+                if (!response.ok) throw new Error('Failed to fetch');
+
+                const csvText = await response.text();
+                foodDatabase = parseCSV(csvText);
+                
+                // Extract unique types
+                foodTypes = [...new Set(foodDatabase.map(f => f.type).filter(t => t))];
+                populateTypeFilter();
+                
+                statusBar.textContent = `✓ تم تحميل ${foodDatabase.length} صنف`;
+                
+                // Cache
+                localStorage.setItem('foodDatabase', JSON.stringify(foodDatabase));
+                
+            } catch (error) {
+                console.error('Error:', error);
+                
+                const cached = localStorage.getItem('foodDatabase');
+                if (cached) {
+                    foodDatabase = JSON.parse(cached);
+                    foodTypes = [...new Set(foodDatabase.map(f => f.type).filter(t => t))];
+                    populateTypeFilter();
+                    statusBar.textContent = '⚠ استخدام البيانات المخزنة';
+                } else {
+                    statusBar.className = 'status-bar error';
+                    statusBar.textContent = '❌ خطأ في تحميل البيانات';
+                }
+            }
+        }
+
+        // Parse CSV with your column structure
+        function parseCSV(csvText) {
+            const lines = csvText.trim().split('\n');
+            const foods = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                const values = parseCSVLine(lines[i]);
+                
+                if (values.length >= 5 && values[2]?.trim()) {
+                    foods.push({
+                        type: values[0]?.trim() || '',
+                        unit: values[1]?.trim() || 'وحدة',
+                        name: values[2]?.trim() || '',
+                        protein: parseFloat(values[3]) || 0,
+                        carbs: parseFloat(values[4]) || 0,
+                        dohoon: parseFloat(values[5]) || 0,
+                        quantity: parseFloat(values[6]) || 1,
+                        totalCarb: parseFloat(values[7]) || 0
+                    });
+                }
+            }
+            
+            return foods;
+        }
+
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+            
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current);
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            result.push(current);
+            return result;
+        }
+
+        // Populate type filter dropdown
+        function populateTypeFilter() {
+            const select = document.getElementById('typeFilter');
+            select.innerHTML = '<option value="">كل الأنواع</option>';
+            foodTypes.forEach(type => {
+                select.innerHTML += `<option value="${type}">${type}</option>`;
+            });
+        }
+
+        // Filter foods by type and search
+        function filterFoods() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const selectedType = document.getElementById('typeFilter').value;
+            const tableContainer = document.querySelector('.food-table-container');
+            
+            // Show table only if there's a search term or type filter
+            if (searchTerm || selectedType) {
+                tableContainer.classList.add('show');
+                
+                let filtered = foodDatabase;
+                
+                if (selectedType) {
+                    filtered = filtered.filter(f => f.type === selectedType);
+                }
+                
+                if (searchTerm) {
+                    filtered = filtered.filter(f => f.name.toLowerCase().includes(searchTerm));
+                }
+                
+                renderFoodTable(filtered);
+            } else {
+                tableContainer.classList.remove('show');
+            }
+        }
+
+        // Render food table
+        function renderFoodTable(foods) {
+            const tbody = document.getElementById('foodTableBody');
+            
+            if (foods.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="loading">لا توجد نتائج</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = foods.map((food, index) => {
+                const actualIndex = foodDatabase.indexOf(food);
+                return `
+                    <tr>
+                        <td>${food.name}</td>
+                        <td>${food.unit}</td>
+                        <td>${food.carbs}g</td>
+                        <td><input type="number" class="portion-input" value="1" min="0.25" step="0.25" data-index="${actualIndex}"></td>
+                        <td><button class="add-btn" onclick="addToMeal(${actualIndex})">+</button></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Add food to meal
+        function addToMeal(index) {
+            const food = foodDatabase[index];
+            if (!food) return;
+            
+            const portionInput = document.querySelector(`.portion-input[data-index="${index}"]`);
+            const portions = parseFloat(portionInput?.value) || 1;
+
+            currentMeal.push({
+                ...food,
+                portions: portions,
+                totalCarbs: food.carbs * portions
+            });
+
+            renderMeal();
+            calculateTotalCarbs();
+        }
+
+        // Render meal
+        function renderMeal() {
+            const mealList = document.getElementById('mealList');
+            
+            if (currentMeal.length === 0) {
+                mealList.innerHTML = '<div class="empty-meal">لم تضف أي طعام بعد</div>';
+                document.getElementById('nextStep2Btn').disabled = true;
+                return;
+            }
+
+            document.getElementById('nextStep2Btn').disabled = false;
+
+            mealList.innerHTML = currentMeal.map((item, index) => `
+                <div class="meal-item">
+                    <div class="meal-item-info">
+                        <div class="meal-item-name">${item.name}</div>
+                        <div class="meal-item-details">
+                            ${item.portions} × ${item.unit} = ${item.totalCarbs.toFixed(1)}g
+                        </div>
+                    </div>
+                    <button class="remove-btn" onclick="removeFromMeal(${index})">✕</button>
+                </div>
+            `).join('');
+        }
+
+        // Remove from meal
+        function removeFromMeal(index) {
+            currentMeal.splice(index, 1);
+            renderMeal();
+            calculateTotalCarbs();
+        }
+
+        // Calculate total carbs
+        function calculateTotalCarbs() {
+            totalCarbs = currentMeal.reduce((sum, item) => sum + item.totalCarbs, 0);
+            document.getElementById('totalCarbs').textContent = totalCarbs.toFixed(1);
+        }
+
+        // Clear meal
+        function clearMeal() {
+            if (confirm('هل تريد مسح جميع الأطعمة من الوجبة؟')) {
+                currentMeal = [];
+                renderMeal();
+                calculateTotalCarbs();
+            }
+        }
+
+        // ========================================
+        // STEP NAVIGATION
+        // ========================================
+
+        function goToStep2() {
+            if (currentMeal.length === 0) return;
+            
+            document.getElementById('step1Card').classList.add('hidden');
+            document.getElementById('mealCard').classList.add('hidden');
+            document.getElementById('step2Card').classList.remove('hidden');
+            
+            document.getElementById('calcTotalCarbs').textContent = totalCarbs.toFixed(1) + ' جرام';
+            
+            const savedCarbFactor = localStorage.getItem('carbFactor');
+            if (savedCarbFactor) {
+                document.getElementById('carbFactor').value = savedCarbFactor;
+                calculateFoodInsulin();
+            }
+        }
+
+        function goToStep3() {
+            document.
