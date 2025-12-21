@@ -29,7 +29,6 @@
             margin-bottom: 10px;
             font-size: 20px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-                background-color: #4a90e2;
         }
 
         .card {
@@ -501,7 +500,7 @@
                             <th>الطعام</th>
                             <th>الوحدة</th>
                             <th>كارب</th>
-                            <th>الوزن</th>
+                            <th>الكمية</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -591,7 +590,7 @@
                 </div>
                 <div class="input-group">
                     <label>السكر المستهدف:</label>
-                    <input type="number" id="targetBS" placeholder="100" min="0" value="100" oninput="calculateCorrection()">
+                    <input type="number" id="targetBS" placeholder="100" min="0" oninput="calculateCorrection()">
                 </div>
             </div>
 
@@ -993,8 +992,10 @@
             correctionInsulinAmount = 0;
             
             // Reset inputs but keep saved factors
-            document.getElementById('carbFactor').value = localStorage.getItem('carbFactor') || '';
+            document.getElementById('carbFactor').value = '';
             document.getElementById('currentBS').value = '';
+            document.getElementById('targetBS').value = '';
+            document.getElementById('correctionFactor').value = '';
             document.getElementById('searchInput').value = '';
             document.getElementById('typeFilter').value = '';
             
