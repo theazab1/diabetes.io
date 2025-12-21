@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #87CEEB 0%, #E0F6FF 100%);
             min-height: 100vh;
             padding: 10px;
         }
@@ -46,7 +46,7 @@
             justify-content: space-between;
             margin-bottom: 12px;
             padding-bottom: 10px;
-            border-bottom: 2px solid #667eea;
+            border-bottom: 2px solid #4A90E2;
         }
 
         .card-header-right {
@@ -62,7 +62,7 @@
         }
 
         .step-number {
-            background: #667eea;
+            background: #4A90E2;
             color: white;
             width: 24px;
             height: 24px;
@@ -76,7 +76,7 @@
         }
 
         .refresh-btn {
-            background: #667eea;
+            background: #4A90E2;
             color: white;
             border: none;
             padding: 5px 10px;
@@ -87,7 +87,7 @@
         }
 
         .refresh-btn:hover {
-            background: #5a6fd6;
+            background: #357ABD;
         }
 
         /* Status Bar */
@@ -135,7 +135,7 @@
         .filter-search-row select:focus,
         .filter-search-row input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #4A90E2;
         }
 
         /* Food Table */
@@ -144,6 +144,11 @@
             overflow-y: auto;
             border-radius: 8px;
             border: 1px solid #ddd;
+            display: none;
+        }
+        
+        .food-table-container.show {
+            display: block;
         }
 
         table {
@@ -158,7 +163,7 @@
         }
 
         th {
-            background: #667eea;
+            background: #4A90E2;
             color: white;
             position: sticky;
             top: 0;
@@ -242,7 +247,7 @@
 
         /* Total Carbs Display */
         .total-carbs-box {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
             color: white;
             padding: 12px;
             border-radius: 8px;
@@ -281,12 +286,12 @@
         }
 
         .btn-primary {
-            background: #667eea;
+            background: #4A90E2;
             color: white;
         }
 
         .btn-primary:hover {
-            background: #5a6fd6;
+            background: #357ABD;
         }
 
         .btn-primary:disabled {
@@ -333,7 +338,7 @@
 
         .input-group input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #4A90E2;
         }
 
         .input-group small {
@@ -527,7 +532,7 @@
 
             <!-- Buttons in Same Row -->
             <div class="button-row">
-                <button class="btn btn-secondary" onclick="clearMeal()">🗑️ مسح</button>
+                <button class="btn btn-danger" onclick="startOver()">🔄 البدء من جديد</button>
                 <button class="btn btn-primary" onclick="goToStep2()" id="nextStep2Btn" disabled>التالي ←</button>
             </div>
         </div>
@@ -563,7 +568,7 @@
             </div>
 
             <div class="button-row" style="margin-top: 12px;">
-                <button class="btn btn-secondary" onclick="goToStep1()">→ السابق</button>
+                <button class="btn btn-danger" onclick="startOver()">🔄 البدء من جديد</button>
                 <button class="btn btn-primary" onclick="goToStep3()" id="nextStep3Btn" disabled>التالي ←</button>
             </div>
         </div>
@@ -585,7 +590,7 @@
                 </div>
                 <div class="input-group">
                     <label>السكر المستهدف:</label>
-                    <input type="number" id="targetBS" placeholder="100" min="0" value="100" oninput="calculateCorrection()">
+                    <input type="number" id="targetBS" placeholder="100" min="0" oninput="calculateCorrection()">
                 </div>
             </div>
 
@@ -611,7 +616,7 @@
             </div>
 
             <div class="button-row" style="margin-top: 12px;">
-                <button class="btn btn-secondary" onclick="goToStep2()">→ السابق</button>
+                <button class="btn btn-danger" onclick="startOver()">🔄 البدء من جديد</button>
                 <button class="btn btn-success" onclick="showFinalResult()">احسب ←</button>
             </div>
         </div>
@@ -652,7 +657,7 @@
                 </div>
             </div>
 
-            <button class="btn btn-danger" onclick="startOver()" style="width: 100%; margin-top: 12px;">🔄 وجبة جديدة</button>
+            <button class="btn btn-danger" onclick="startOver()" style="width: 100%; margin-top: 12px;">🔄 البدء من جديد</button>
         </div>
     </div>
 
@@ -691,9 +696,7 @@
                 foodTypes = [...new Set(foodDatabase.map(f => f.type).filter(t => t))];
                 populateTypeFilter();
                 
-                renderFoodTable(foodDatabase);
-                
-                statusBar.textContent = `✓ تم تحميل ${foodDatabase.length} صنف`;
+                statusBar.textContent = '✓ تم تحميل البيانات';
                 
                 // Cache
                 localStorage.setItem('foodDatabase', JSON.stringify(foodDatabase));
@@ -706,7 +709,6 @@
                     foodDatabase = JSON.parse(cached);
                     foodTypes = [...new Set(foodDatabase.map(f => f.type).filter(t => t))];
                     populateTypeFilter();
-                    renderFoodTable(foodDatabase);
                     statusBar.textContent = '⚠ استخدام البيانات المخزنة';
                 } else {
                     statusBar.className = 'status-bar error';
@@ -773,18 +775,26 @@
         function filterFoods() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const selectedType = document.getElementById('typeFilter').value;
+            const tableContainer = document.querySelector('.food-table-container');
             
-            let filtered = foodDatabase;
-            
-            if (selectedType) {
-                filtered = filtered.filter(f => f.type === selectedType);
+            // Show table only if there's a search term or type filter
+            if (searchTerm || selectedType) {
+                tableContainer.classList.add('show');
+                
+                let filtered = foodDatabase;
+                
+                if (selectedType) {
+                    filtered = filtered.filter(f => f.type === selectedType);
+                }
+                
+                if (searchTerm) {
+                    filtered = filtered.filter(f => f.name.toLowerCase().includes(searchTerm));
+                }
+                
+                renderFoodTable(filtered);
+            } else {
+                tableContainer.classList.remove('show');
             }
-            
-            if (searchTerm) {
-                filtered = filtered.filter(f => f.name.toLowerCase().includes(searchTerm));
-            }
-            
-            renderFoodTable(filtered);
         }
 
         // Render food table
@@ -868,9 +878,11 @@
 
         // Clear meal
         function clearMeal() {
-            currentMeal = [];
-            renderMeal();
-            calculateTotalCarbs();
+            if (confirm('هل تريد مسح جميع الأطعمة من الوجبة؟')) {
+                currentMeal = [];
+                renderMeal();
+                calculateTotalCarbs();
+            }
         }
 
         // ========================================
@@ -891,13 +903,6 @@
                 document.getElementById('carbFactor').value = savedCarbFactor;
                 calculateFoodInsulin();
             }
-        }
-
-        function goToStep1() {
-            document.getElementById('step2Card').classList.add('hidden');
-            document.getElementById('step3Card').classList.add('hidden');
-            document.getElementById('step1Card').classList.remove('hidden');
-            document.getElementById('mealCard').classList.remove('hidden');
         }
 
         function goToStep3() {
@@ -980,18 +985,30 @@
         }
 
         function startOver() {
+            // Clear all data
             currentMeal = [];
             totalCarbs = 0;
             foodInsulinAmount = 0;
             correctionInsulinAmount = 0;
             
-            document.getElementById('carbFactor').value = localStorage.getItem('carbFactor') || '';
+            // Reset inputs but keep saved factors
+            document.getElementById('carbFactor').value = '';
             document.getElementById('currentBS').value = '';
+            document.getElementById('targetBS').value = '';
+            document.getElementById('correctionFactor').value = '';
+            document.getElementById('searchInput').value = '';
+            document.getElementById('typeFilter').value = '';
+            
+            // Hide food table
+            document.querySelector('.food-table-container').classList.remove('show');
             
             renderMeal();
             calculateTotalCarbs();
             
+            // Hide all cards except step 1 and meal
             document.getElementById('resultCard').classList.add('hidden');
+            document.getElementById('step2Card').classList.add('hidden');
+            document.getElementById('step3Card').classList.add('hidden');
             document.getElementById('step1Card').classList.remove('hidden');
             document.getElementById('mealCard').classList.remove('hidden');
         }
