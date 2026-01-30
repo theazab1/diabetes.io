@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MrDiabetes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Cairo', Arial, sans-serif;
+            background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 100%);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #00BCD4, #00ACC1);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .home-btn {
+            background: #ff5252;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            font-size: 22px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+        
+        .home-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .header-title {
+            font-size: 24px;
+            font-weight: bold;
+            flex: 1;
+            text-align: center;
+            margin-right: 55px;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 30px 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            max-width: 500px;
+            margin: 0 auto;
+            width: 100%;
+            flex: 1;
+        }
+        
+        .circle-button {
+            aspect-ratio: 1;
+            background: white;
+            border-radius: 50%;
+            border: 5px solid #2196F3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #1976D2;
+            text-decoration: none;
+            box-shadow: 0 8px 20px rgba(33, 150, 243, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .circle-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(33, 150, 243, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.4s, height 0.4s;
+        }
+        
+        .circle-button:hover::before {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .circle-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 30px rgba(33, 150, 243, 0.4);
+            border-color: #1976D2;
+        }
+        
+        .circle-button:active {
+            transform: scale(0.98);
+        }
+        
+        .button-text {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            line-height: 1.4;
+        }
+        
+        .footer-text {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #1565C0;
+            margin-top: 30px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+        }
+        
+        @media (max-width: 480px) {
+            .header {
+                padding: 12px 15px;
+            }
+            
+            .header-title {
+                font-size: 20px;
+                margin-right: 45px;
+            }
+            
+            .home-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 20px;
+            }
+            
+            .main-content {
+                padding: 20px 15px;
+            }
+            
+            .buttons-grid {
+                gap: 20px;
+            }
+            
+            .circle-button {
+                font-size: 14px;
+                border-width: 4px;
+            }
+            
+            .footer-text {
+                font-size: 16px;
+                margin-top: 20px;
+                padding: 12px;
+            }
+        }
+        
+        @media (min-width: 768px) {
+            .buttons-grid {
+                grid-template-columns: repeat(2, 200px);
+                justify-content: center;
+                gap: 30px;
+            }
+            
+            .circle-button {
+                font-size: 18px;
+            }
+        }
+        
+        @media (max-height: 600px) {
+            .main-content {
+                padding: 15px;
+            }
+            
+            .buttons-grid {
+                gap: 15px;
+            }
+            
+            .footer-text {
+                margin-top: 15px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="home-btn" onclick="window.location.href='https://www.google.com'">🏠</button>
+        <div class="header-title">MrDiabetes</div>
+    </div>
+    
+    <div class="main-content">
+        <div class="buttons-grid">
+            <a href="https://www.google.com" class="circle-button">
+                <span class="button-text">احسب جرعة<br>الرابد</span>
+            </a>
+            
+            <a href="https://www.google.com" class="circle-button">
+                <span class="button-text">احسب معامل<br>السعرات</span>
+            </a>
+            
+            <a href="https://www.google.com" class="circle-button">
+                <span class="button-text">احسب جرعة<br>التصحيح</span>
+            </a>
+            
+            <a href="https://www.google.com" class="circle-button">
+                <span class="button-text">احسب معامل<br>التصحيح</span>
+            </a>
+            
+            <a href="https://www.google.com" class="circle-button">
+                <span class="button-text">تحويل وقت<br>الوجبة</span>
+            </a>
+            
+            <a href="https://www.google.com" class="circle-button">
+                <span class="button-text">احسب معامل<br>الرابد</span>
+            </a>
+        </div>
+        
+        <div class="footer-text">
+            يرجاء تأكيد النتائج مع الطبيب المعالج
+        </div>
+    </div>
+</body>
+</html>
