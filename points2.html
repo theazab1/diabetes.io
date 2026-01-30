@@ -319,7 +319,7 @@
         // CONFIGURATION
         // ========================================
         const POINTS_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT8o1qHZUUOVnh4msa5fO6q-DvMIhefYJLmjdSvdkMuoLOd3GNOJqbKX_CagFhWzXmRbRx5AIxjuHKh/pub?gid=1778319106&single=true&output=csv';
-        const CORS_PROXY = 'https://api.allorigins.win/get?url=';
+        // Proxy removed - not needed for published sheets
         // ========================================
 
         let pointsDatabase = [];
@@ -332,12 +332,12 @@
             statusBar.textContent = 'جاري تحميل البيانات...';
 
             try {
-                const response = await fetch(CORS_PROXY + encodeURIComponent(POINTS_SHEET_URL));
+                // Fetch directly from Google (no proxy, no encoding needed)
+                const response = await fetch(POINTS_SHEET_URL);
                 
                 if (!response.ok) throw new Error('Failed to fetch');
 
-                const data = await response.json();
-                const csvText = data.contents;
+                const csvText = await response.text();
                 pointsDatabase = parseCSV(csvText);
                 
                 // Extract unique types
