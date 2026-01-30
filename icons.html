@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MrDiabetes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Cairo', Arial, sans-serif;
+            background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 100%);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #00BCD4, #00ACC1);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .close-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .header-title {
+            font-size: 24px;
+            font-weight: bold;
+            flex: 1;
+            text-align: center;
+            margin-right: 50px;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+        
+        .feature-card:nth-child(1) .feature-icon {
+            background: linear-gradient(135deg, #FFE0B2, #FFCC80);
+        }
+        
+        .feature-card:nth-child(2) .feature-icon {
+            background: linear-gradient(135deg, #FFCDD2, #EF9A9A);
+        }
+        
+        .feature-card:nth-child(3) .feature-icon {
+            background: linear-gradient(135deg, #C8E6C9, #A5D6A7);
+        }
+        
+        .feature-card:nth-child(4) .feature-icon {
+            background: linear-gradient(135deg, #E1BEE7, #CE93D8);
+        }
+        
+        .feature-label {
+            font-size: 14px;
+            font-weight: bold;
+            color: #424242;
+            text-align: center;
+        }
+        
+        .contact-section {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .contact-title {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .contact-item:last-child {
+            border-bottom: none;
+        }
+        
+        .contact-text {
+            flex: 1;
+            font-size: 14px;
+            color: #555;
+        }
+        
+        .contact-info {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+            direction: ltr;
+        }
+        
+        @media (max-width: 480px) {
+            .header {
+                padding: 12px 15px;
+            }
+            
+            .header-title {
+                font-size: 20px;
+                margin-right: 40px;
+            }
+            
+            .close-btn {
+                width: 30px;
+                height: 30px;
+                font-size: 18px;
+            }
+            
+            .main-content {
+                padding: 15px;
+            }
+            
+            .features-grid {
+                gap: 15px;
+            }
+            
+            .feature-card {
+                padding: 15px;
+            }
+            
+            .feature-icon {
+                width: 70px;
+                height: 70px;
+                font-size: 35px;
+            }
+            
+            .feature-label {
+                font-size: 13px;
+            }
+            
+            .contact-section {
+                padding: 15px;
+            }
+            
+            .contact-title {
+                font-size: 16px;
+            }
+            
+            .contact-text, .contact-info {
+                font-size: 13px;
+            }
+        }
+        
+        @media (min-width: 768px) {
+            .features-grid {
+                grid-template-columns: repeat(2, 250px);
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="close-btn" onclick="window.location.href='https://www.google.com'">✕</button>
+        <div class="header-title">MrDiabetes</div>
+    </div>
+    
+    <div class="main-content">
+        <div class="features-grid">
+            <a href="https://www.google.com" class="feature-card">
+                <div class="feature-icon">🎬</div>
+                <div class="feature-label">فيديوهات توعية</div>
+            </a>
+            
+            <a href="https://www.google.com" class="feature-card">
+                <div class="feature-icon">🧮</div>
+                <div class="feature-label">احسب جرعتك</div>
+            </a>
+            
+            <a href="https://www.google.com" class="feature-card">
+                <div class="feature-icon">⚖️</div>
+                <div class="feature-label">بحث الطعام حسب وزن السعرات</div>
+            </a>
+            
+            <a href="https://www.google.com" class="feature-card">
+                <div class="feature-icon">🍽️</div>
+                <div class="feature-label">بحث الطعام حسب نقاط الأكل</div>
+            </a>
+        </div>
+        
+        <div class="contact-section">
+            <div class="contact-title">تواصل معانا</div>
+            
+            <div class="contact-item">
+                <div class="contact-text">الشيخ زايد: توين تاورز حبي ٤ الدور الثالث عيادة د</div>
+                <div class="contact-info">01007071919 :ت</div>
+            </div>
+            
+            <div class="contact-item">
+                <div class="contact-text">المقى: ١٦ شارع الجزيرة بجوار محطة مترو المعادى</div>
+                <div class="contact-info">01007071919 :ت</div>
+            </div>
+            
+            <div class="contact-item">
+                <div class="contact-text">اليوم: ٢١١ شارع اليوم بجوار علي بابا بارسليو</div>
+                <div class="contact-info">01004745100 :ت</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
