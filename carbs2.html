@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>بحث الأطعمة</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+            background: linear-gradient(135deg, #87CEEB 0%, #E0F6FF 100%);
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 22px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #4A90E2;
+        }
+
+        .card-header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-header h2 {
+            color: #333;
+            font-size: 16px;
+            margin: 0;
+        }
+
+        .icon {
+            background: #4A90E2;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .refresh-btn {
+            background: #4A90E2;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .refresh-btn:hover {
+            background: #357ABD;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .status-bar.error {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        /* Search Row */
+        .search-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .search-row select {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .search-row input {
+            flex: 2;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .search-row select:focus,
+        .search-row input:focus {
+            outline: none;
+            border-color: #4A90E2;
+        }
+
+        /* Results Info */
+        .results-info {
+            background: #f0f8ff;
+            color: #4A90E2;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-size: 12px;
+            text-align: center;
+            display: none;
+        }
+
+        .results-info.show {
+            display: block;
+        }
+
+        /* Table Container */
+        .table-container {
+            max-height: 500px;
+            overflow-y: auto;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            display: none;
+        }
+
+        .table-container.show {
+            display: block;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px 8px;
+            text-align: right;
+            font-size: 13px;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #4A90E2;
+            color: white;
+            position: sticky;
+            top: 0;
+            font-weight: 600;
+            z-index: 10;
+        }
+
+        tr:hover {
+            background: #f0f8ff;
+        }
+
+        td {
+            color: #333;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .empty-state-text {
+            font-size: 14px;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            font-size: 13px;
+        }
+
+        /* Scrollbar Styling */
+        .table-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .table-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .table-container::-webkit-scrollbar-thumb {
+            background: #4A90E2;
+            border-radius: 4px;
+        }
+
+        .table-container::-webkit-scrollbar-thumb:hover {
+            background: #357ABD;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            th, td {
+                padding: 8px 5px;
+                font-size: 11px;
+            }
+
+            .search-row {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 بحث في قاعدة بيانات الأطعمة</h1>
+
+        <!-- Status Bar -->
+        <div class="status-bar" id="statusBar">جاري تحميل البيانات...</div>
+
+        <!-- Search Card -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-header-right">
+                    <span class="icon">🔍</span>
+                    <h2>البحث والتصفية</h2>
+                </div>
+                <button class="refresh-btn" onclick="loadFoodData()">🔄 تحديث</button>
+            </div>
+            
+            <!-- Search Row -->
+            <div class="search-row">
+                <select id="typeFilter" onchange="filterFoods()">
+                    <option value="">كل الأنواع</option>
+                </select>
+                <input type="text" id="searchInput" placeholder="ابحث عن اسم الطعام..." oninput="filterFoods()">
+            </div>
+
+            <!-- Results Info -->
+            <div class="results-info" id="resultsInfo">
+                عرض <strong id="resultCount">0</strong> نتيجة
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="emptyState">
+                <div class="empty-state-icon">🍽️</div>
+                <div class="empty-state-text">ابدأ البحث باستخدام الفلتر أو كتابة اسم الطعام</div>
+            </div>
+
+            <!-- Table -->
+            <div class="table-container" id="tableContainer">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>النوع</th>
+                            <th>الوحدة</th>
+                            <th>اسم الطعام</th>
+                            <th>بروتين (g)</th>
+                            <th>كارب (g)</th>
+                            <th>دهون (g)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="foodTableBody">
+                        <tr><td colspan="6" class="loading">جاري التحميل...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========================================
+        // CONFIGURATION
+        // ========================================
+        const FOODS_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT8o1qHZUUOVnh4msa5fO6q-DvMIhefYJLmjdSvdkMuoLOd3GNOJqbKX_CagFhWzXmRbRx5AIxjuHKh/pub?gid=0&single=true&output=csv';
+        // Proxy removed - not needed for published sheets
+        // ========================================
+
+        let foodDatabase = [];
+        let foodTypes = [];
+
+        // Load food data
+        async function loadFoodData() {
+            const statusBar = document.getElementById('statusBar');
+            statusBar.className = 'status-bar';
+            statusBar.textContent = 'جاري تحميل البيانات...';
+
+            try {
+                // Fetch directly from Google (no proxy, no encoding needed)
+                const response = await fetch(FOODS_SHEET_URL);
+                
+                if (!response.ok) throw new Error('Failed to fetch');
+
+                const csvText = await response.text();
+                foodDatabase = parseCSV(csvText);
+                
+                // Extract unique types
+                foodTypes = [...new Set(foodDatabase.map(f => f.type).filter(t => t))].sort();
+                populateTypeFilter();
+                
+                statusBar.textContent = '✓ تم تحميل البيانات';
+                
+                // Cache
+                localStorage.setItem('foodDatabase', JSON.stringify(foodDatabase));
+                
+            } catch (error) {
+                console.error('Error:', error);
+                
+                const cached = localStorage.getItem('foodDatabase');
+                if (cached) {
+                    foodDatabase = JSON.parse(cached);
+                    foodTypes = [...new Set(foodDatabase.map(f => f.type).filter(t => t))].sort();
+                    populateTypeFilter();
+                    statusBar.textContent = '⚠ استخدام البيانات المخزنة';
+                } else {
+                    statusBar.className = 'status-bar error';
+                    statusBar.textContent = '❌ خطأ في تحميل البيانات';
+                }
+            }
+        }
+
+        // Parse CSV
+        function parseCSV(csvText) {
+            const lines = csvText.trim().split('\n');
+            const foods = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                const values = parseCSVLine(lines[i]);
+                
+                if (values.length >= 6 && values[2]?.trim()) {
+                    foods.push({
+                        type: values[0]?.trim() || '',
+                        unit: values[1]?.trim() || 'وحدة',
+                        name: values[2]?.trim() || '',
+                        protein: parseFloat(values[3]) || 0,
+                        carbs: parseFloat(values[4]) || 0,
+                        fats: parseFloat(values[5]) || 0
+                    });
+                }
+            }
+            
+            return foods;
+        }
+
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+            
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current);
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            result.push(current);
+            return result;
+        }
+
+        // Populate type filter
+        function populateTypeFilter() {
+            const select = document.getElementById('typeFilter');
+            select.innerHTML = '<option value="">كل الأنواع</option>';
+            foodTypes.forEach(type => {
+                select.innerHTML += `<option value="${type}">${type}</option>`;
+            });
+        }
+
+        // Filter foods
+        function filterFoods() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+            const selectedType = document.getElementById('typeFilter').value;
+            
+            const tableContainer = document.getElementById('tableContainer');
+            const emptyState = document.getElementById('emptyState');
+            const resultsInfo = document.getElementById('resultsInfo');
+
+            // Show results only if there's a search term or type filter
+            if (searchTerm || selectedType) {
+                emptyState.style.display = 'none';
+                
+                let filtered = foodDatabase;
+                
+                // Filter by type (column 1)
+                if (selectedType) {
+                    filtered = filtered.filter(f => f.type === selectedType);
+                }
+                
+                // Filter by name (column 3)
+                if (searchTerm) {
+                    filtered = filtered.filter(f => f.name.toLowerCase().includes(searchTerm));
+                }
+                
+                // Update results count
+                document.getElementById('resultCount').textContent = filtered.length;
+                resultsInfo.classList.add('show');
+                
+                if (filtered.length > 0) {
+                    renderFoodTable(filtered);
+                    tableContainer.classList.add('show');
+                } else {
+                    tableContainer.classList.remove('show');
+                    showNoResults();
+                }
+            } else {
+                // No search - show empty state
+                tableContainer.classList.remove('show');
+                resultsInfo.classList.remove('show');
+                emptyState.style.display = 'block';
+            }
+        }
+
+        // Render food table
+        function renderFoodTable(foods) {
+            const tbody = document.getElementById('foodTableBody');
+            
+            tbody.innerHTML = foods.map(food => `
+                <tr>
+                    <td>${food.type || '-'}</td>
+                    <td>${food.unit}</td>
+                    <td><strong>${food.name}</strong></td>
+                    <td>${food.protein.toFixed(1)}</td>
+                    <td>${food.carbs.toFixed(1)}</td>
+                    <td>${food.fats.toFixed(1)}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Show no results message
+        function showNoResults() {
+            const tbody = document.getElementById('foodTableBody');
+            tbody.innerHTML = '<tr><td colspan="6" class="no-results">لا توجد نتائج مطابقة للبحث</td></tr>';
+            document.getElementById('tableContainer').classList.add('show');
+        }
+
+        // Initialize
+        loadFoodData();
+    </script>
+</body>
+</html>
