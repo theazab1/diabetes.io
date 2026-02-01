@@ -2,11 +2,11 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <meta name="description" content="برنامج MrDiabetes - أدوات لحساب جرعة الإنسولين وإدارة السكري">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#4CAF50">
+    <meta name="description" content="برنامج MrDiabetes - أدوات لحساب جرعة الإنسولين وإدارة السكري">
+    <meta name="theme-color" content="#00BCD4">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="MrDiabetes">
@@ -20,264 +20,273 @@
     <link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192x192.png">
     
     <title>MrDiabetes</title>
-    
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+        }
+        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-            direction: rtl;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Cairo', Arial, sans-serif;
+            background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 100%);
+            display: flex;
+            flex-direction: column;
         }
-
+        
         .header {
-            background: white;
-            padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            margin-bottom: 30px;
-            position: relative;
+            background: linear-gradient(135deg, #00BCD4, #00ACC1);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-
+        
         .close-btn {
-            position: absolute;
-            left: 20px;
-            top: 20px;
-            background: #f44336;
+            background: #ff4444;
             color: white;
             border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 1.5rem;
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            font-size: 20px;
+            font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(244, 67, 54, 0.3);
-            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-
-        .close-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 15px rgba(244, 67, 54, 0.4);
+        
+        .header-title {
+            font-size: 24px;
+            font-weight: bold;
+            flex: 1;
+            text-align: center;
+            margin-right: 50px;
         }
-
-        h1 {
-            color: #667eea;
-            font-size: 2rem;
-            margin: 10px 0;
+        
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
         }
-
-        .tools-grid {
+        
+        .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 20px;
-            margin-bottom: 30px;
+            max-width: 600px;
+            margin: 0 auto;
         }
-
-        .tool-card {
+        
+        .feature-card {
             background: white;
             border-radius: 20px;
-            padding: 30px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             text-decoration: none;
-            color: inherit;
-            display: block;
-        }
-
-        .tool-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .tool-icon {
-            font-size: 4rem;
-            margin-bottom: 15px;
-            display: block;
-        }
-
-        .tool-title {
-            font-size: 1.3rem;
             color: #333;
-            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
             margin-bottom: 10px;
         }
-
-        .tool-description {
-            color: #666;
-            font-size: 0.95rem;
-            line-height: 1.6;
+        
+        .feature-card:nth-child(1) .feature-icon {
+            background: linear-gradient(135deg, #FFE0B2, #FFCC80);
         }
-
+        
+        .feature-card:nth-child(2) .feature-icon {
+            background: linear-gradient(135deg, #FFCDD2, #EF9A9A);
+        }
+        
+        .feature-card:nth-child(3) .feature-icon {
+            background: linear-gradient(135deg, #C8E6C9, #A5D6A7);
+        }
+        
+        .feature-card:nth-child(4) .feature-icon {
+            background: linear-gradient(135deg, #E1BEE7, #CE93D8);
+        }
+        
+        .feature-label {
+            font-size: 14px;
+            font-weight: bold;
+            color: #424242;
+            text-align: center;
+        }
+        
         .contact-section {
             background: white;
             border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        .contact-title {
-            color: #667eea;
-            font-size: 1.8rem;
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
-        .contact-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-
-        .contact-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
             padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            margin-top: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
-
-        .contact-location {
-            font-size: 1.1rem;
+        
+        .contact-title {
+            font-size: 18px;
             font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .contact-address {
-            font-size: 0.95rem;
-            line-height: 1.6;
-            margin-bottom: 10px;
-        }
-
-        .contact-phone {
-            font-size: 1.1rem;
-            font-weight: bold;
-            direction: ltr;
-            text-align: right;
-        }
-
-        @media (max-width: 768px) {
-            .tools-grid {
-                grid-template-columns: 1fr;
-            }
-
-            h1 {
-                font-size: 1.5rem;
-            }
-
-            .tool-icon {
-                font-size: 3rem;
-            }
-        }
-
-        /* PWA Install Banner */
-        .install-banner {
-            background: #4CAF50;
-            color: white;
-            padding: 15px 20px;
-            border-radius: 15px;
+            text-align: center;
             margin-bottom: 20px;
-            display: none;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+            color: #333;
         }
-
-        .install-banner.show {
+        
+        .contact-item {
             display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
         }
-
-        .install-text {
+        
+        .contact-item:last-child {
+            border-bottom: none;
+        }
+        
+        .contact-text {
             flex: 1;
-            font-size: 1.1rem;
+            font-size: 14px;
+            color: #555;
         }
-
-        .install-btn {
-            background: white;
-            color: #4CAF50;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 25px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-left: 10px;
+        
+        .contact-info {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+            direction: ltr;
         }
-
-        .install-close {
-            background: transparent;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            margin-left: 10px;
+        
+        @media (max-width: 480px) {
+            .header {
+                padding: 12px 15px;
+            }
+            
+            .header-title {
+                font-size: 20px;
+                margin-right: 40px;
+            }
+            
+            .close-btn {
+                width: 30px;
+                height: 30px;
+                font-size: 18px;
+            }
+            
+            .main-content {
+                padding: 15px;
+            }
+            
+            .features-grid {
+                gap: 15px;
+            }
+            
+            .feature-card {
+                padding: 15px;
+            }
+            
+            .feature-icon {
+                width: 70px;
+                height: 70px;
+                font-size: 35px;
+            }
+            
+            .feature-label {
+                font-size: 13px;
+            }
+            
+            .contact-section {
+                padding: 15px;
+            }
+            
+            .contact-title {
+                font-size: 16px;
+            }
+            
+            .contact-text, .contact-info {
+                font-size: 13px;
+            }
+        }
+        
+        @media (min-width: 768px) {
+            .features-grid {
+                grid-template-columns: repeat(2, 250px);
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Install PWA Banner -->
-    <div class="install-banner" id="installBanner">
-        <div class="install-text">📱 ثبت التطبيق على جهازك للوصول السريع</div>
-        <button class="install-btn" id="installBtn">تثبيت</button>
-        <button class="install-close" id="closeBanner">×</button>
-    </div>
-
     <div class="header">
-        <button class="close-btn" onclick="window.location.href='First.html'">✕</button>
-        <h1>MrDiabetes</h1>
+        <button class="close-btn" onclick="window.location.href='https://theazab1.github.io/diabetes.io/First.html'">✕</button>
+        <div class="header-title">MrDiabetes</div>
     </div>
-
-    <div class="tools-grid">
-        <a href="videos.html" class="tool-card">
-            <span class="tool-icon">🎬</span>
-            <div class="tool-title">فيديوهات توعية</div>
-            <div class="tool-description">شاهد فيديوهات تعليمية عن إدارة السكري والعناية الصحية</div>
-        </a>
-
-        <a href="theequations.html" class="tool-card">
-            <span class="tool-icon">🧮</span>
-            <div class="tool-title">احسب جرعتك</div>
-            <div class="tool-description">احسب جرعة الإنسولين المناسبة بناءً على قياسات السكر والكربوهيدرات</div>
-        </a>
-
-        <a href="carbs2.html" class="tool-card">
-            <span class="tool-icon">⚖️</span>
-            <div class="tool-title">بحث الطعام حسب وزن السعرات</div>
-            <div class="tool-description">ابحث عن محتوى الكربوهيدرات في الأطعمة المختلفة بالجرامات</div>
-        </a>
-
-        <a href="points2.html" class="tool-card">
-            <span class="tool-icon">🍽️</span>
-            <div class="tool-title">بحث الطعام حسب نقاط الأكل</div>
-            <div class="tool-description">احسب نقاط الطعام لإدارة أفضل للوجبات اليومية</div>
-        </a>
-    </div>
-
-    <div class="contact-section">
-        <h2 class="contact-title">تواصل معانا</h2>
-        <div class="contact-grid">
-            <div class="contact-card">
-                <div class="contact-location">الشيخ زايد</div>
-                <div class="contact-address">توين تاورز حبي ٤ الدور الثالث عيادة د</div>
-                <div class="contact-phone">ت: 01007071919</div>
+    
+    <div class="main-content">
+        <div class="features-grid">
+            <a href="https://theazab1.github.io/diabetes.io/videos.html" class="feature-card">
+                <div class="feature-icon">🎬</div>
+                <div class="feature-label">فيديوهات توعية</div>
+            </a>
+            
+            <a href="https://theazab1.github.io/diabetes.io/theequations.html" class="feature-card">
+                <div class="feature-icon">🧮</div>
+                <div class="feature-label">احسب جرعتك</div>
+            </a>
+            
+            <a href="https://theazab1.github.io/diabetes.io/carbs2.html" class="feature-card">
+                <div class="feature-icon">⚖️</div>
+                <div class="feature-label">بحث الطعام حسب وزن السعرات</div>
+            </a>
+            
+            <a href="https://theazab1.github.io/diabetes.io/points2.html" class="feature-card">
+                <div class="feature-icon">🍽️</div>
+                <div class="feature-label">بحث الطعام حسب نقاط الأكل</div>
+            </a>
+        </div>
+        
+        <div class="contact-section">
+            <div class="contact-title">تواصل معانا</div>
+            
+            <div class="contact-item">
+                <div class="contact-text">الشيخ زايد: توين تاورز حبي ٤ الدور الثالث عيادة د</div>
+                <div class="contact-info">01007071919 :ت</div>
             </div>
-
-            <div class="contact-card">
-                <div class="contact-location">المعادي</div>
-                <div class="contact-address">١٦ شارع الجزيرة بجوار محطة مترو المعادي</div>
-                <div class="contact-phone">ت: 01007071919</div>
+            
+            <div class="contact-item">
+                <div class="contact-text">المقى: ١٦ شارع الجزيرة بجوار محطة مترو المعادى</div>
+                <div class="contact-info">01007071919 :ت</div>
             </div>
-
-            <div class="contact-card">
-                <div class="contact-location">اليوم</div>
-                <div class="contact-address">٢١١ شارع اليوم بجوار علي بابا بارسليو</div>
-                <div class="contact-phone">ت: 01004745100</div>
+            
+            <div class="contact-item">
+                <div class="contact-text">اليوم: ٢١١ شارع اليوم بجوار علي بابا بارسليو</div>
+                <div class="contact-info">01004745100 :ت</div>
             </div>
         </div>
     </div>
@@ -285,58 +294,30 @@
     <script>
         // Service Worker Registration
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('service-worker.js')
-                .then((registration) => {
-                    console.log('Service Worker registered');
-                })
-                .catch((error) => {
-                    console.log('Service Worker registration failed:', error);
-                });
-        }
-
-        // PWA Install Prompt
-        let deferredPrompt;
-        const installBanner = document.getElementById('installBanner');
-        const installBtn = document.getElementById('installBtn');
-        const closeBanner = document.getElementById('closeBanner');
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            
-            // Check if user has dismissed the banner before
-            if (!localStorage.getItem('installBannerDismissed')) {
-                installBanner.classList.add('show');
-            }
-        });
-
-        installBtn.addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                console.log(`User response: ${outcome}`);
-                deferredPrompt = null;
-                installBanner.classList.remove('show');
-            }
-        });
-
-        closeBanner.addEventListener('click', () => {
-            installBanner.classList.remove('show');
-            localStorage.setItem('installBannerDismissed', 'true');
-        });
-
-        // Clear dismissed state after 7 days
-        const dismissedTime = localStorage.getItem('installBannerDismissedTime');
-        if (dismissedTime && Date.now() - dismissedTime > 7 * 24 * 60 * 60 * 1000) {
-            localStorage.removeItem('installBannerDismissed');
-            localStorage.removeItem('installBannerDismissedTime');
-        }
-
-        if (closeBanner) {
-            closeBanner.addEventListener('click', () => {
-                localStorage.setItem('installBannerDismissedTime', Date.now());
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then((registration) => {
+                        console.log('Service Worker registered successfully:', registration.scope);
+                    })
+                    .catch((error) => {
+                        console.log('Service Worker registration failed:', error);
+                    });
             });
         }
+
+        // Check if running as installed PWA
+        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+            console.log('Running as installed PWA');
+        }
+
+        // Online/Offline detection
+        window.addEventListener('online', () => {
+            console.log('Back online');
+        });
+
+        window.addEventListener('offline', () => {
+            console.log('Gone offline');
+        });
     </script>
 </body>
 </html>
