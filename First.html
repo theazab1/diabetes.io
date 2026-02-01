@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="description" content="برنامج MrDiabetes طريقك لضبط السكر - دكتور أحمد السعادي">
+    <meta name="keywords" content="سكري, diabetes, علاج السكر, ضبط السكر, جرعة الإنسولين">
+    <meta name="author" content="دكتور أحمد السعادي">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#4CAF50">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="MrDiabetes">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512x512.png">
+    
+    <title>MrDiabetes</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated clouds */
+        .cloud {
+            position: absolute;
+            font-size: 3rem;
+            opacity: 0.3;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .cloud:nth-child(1) {
+            top: 10%;
+            right: 10%;
+            animation-delay: 0s;
+        }
+
+        .cloud:nth-child(2) {
+            top: 30%;
+            left: 5%;
+            animation-delay: 5s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) translateX(0px); }
+            50% { transform: translateY(-20px) translateX(10px); }
+        }
+
+        .container {
+            background: white;
+            border-radius: 30px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+
+        .doctor-section {
+            margin: 30px 0;
+        }
+
+        .doctor-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid #667eea;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .doctor-name {
+            font-size: 1.5rem;
+            color: #333;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .doctor-title {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .enter-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 18px 45px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 30px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .enter-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.5);
+        }
+
+        .enter-button:active {
+            transform: translateY(0);
+        }
+
+        .tagline {
+            color: #764ba2;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+
+        /* Install PWA Button */
+        .install-container {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .install-button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .install-button:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        /* Loading spinner */
+        .loading {
+            display: none;
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .doctor-image {
+                width: 120px;
+                height: 120px;
+            }
+
+            .enter-button {
+                padding: 15px 35px;
+                font-size: 1.1rem;
+            }
+
+            .container {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cloud">☁️</div>
+    <div class="cloud">☁️</div>
+
+    <div class="container">
+        <h1>MrDiabetes</h1>
+        
+        <div class="doctor-section">
+            <img src="Screenshot_20260129_182910.jpg" alt="دكتور أحمد السعادي" class="doctor-image">
+            <div class="doctor-name">دكتور أحمد السعادي</div>
+            <div class="doctor-title">
+                أخصائي الغدد الصماء والسكر<br>
+                المعهد القومي لأمراض السكر والغدد الصماء<br>
+                عضو الجمعية الأمريكية لأطباء الغدد الصماء
+            </div>
+        </div>
+
+        <a href="icons.html" class="enter-button">أضغط لدخول البرنامج</a>
+        
+        <div class="tagline">برنامج MrDiabetes طريقك لضبط السكر</div>
+
+        <!-- PWA Install Button -->
+        <div class="install-container" id="installContainer">
+            <button class="install-button" id="installButton">
+                📱 تثبيت التطبيق على جهازك
+            </button>
+        </div>
+
+        <div class="loading" id="loading"></div>
+    </div>
+
+    <script>
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then((registration) => {
+                        console.log('Service Worker registered successfully:', registration.scope);
+                    })
+                    .catch((error) => {
+                        console.log('Service Worker registration failed:', error);
+                    });
+            });
+        }
+
+        // PWA Install Prompt
+        let deferredPrompt;
+        const installContainer = document.getElementById('installContainer');
+        const installButton = document.getElementById('installButton');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevent the mini-infobar from appearing on mobile
+            e.preventDefault();
+            // Stash the event so it can be triggered later
+            deferredPrompt = e;
+            // Update UI to show install button
+            installContainer.style.display = 'block';
+        });
+
+        installButton.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                // Show the install prompt
+                deferredPrompt.prompt();
+                // Wait for the user to respond to the prompt
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`User response to the install prompt: ${outcome}`);
+                // Clear the deferredPrompt
+                deferredPrompt = null;
+                // Hide the install button
+                installContainer.style.display = 'none';
+            }
+        });
+
+        // Detect if already installed
+        window.addEventListener('appinstalled', (evt) => {
+            console.log('App installed successfully');
+            installContainer.style.display = 'none';
+        });
+
+        // Check if running as installed PWA
+        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+            console.log('Running as installed PWA');
+        }
+
+        // Online/Offline detection
+        window.addEventListener('online', () => {
+            console.log('Back online');
+            document.body.style.opacity = '1';
+        });
+
+        window.addEventListener('offline', () => {
+            console.log('Gone offline');
+            document.body.style.opacity = '0.8';
+        });
+    </script>
+</body>
+</html>
